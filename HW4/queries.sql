@@ -16,6 +16,14 @@ SELECT c.name, (
 FROM categories AS c;
 
 -- для каждой категории список брендов товаров, входящих в нее
--- TODO: пока придумал как выбрать список брендов для конкретной категории
--- через UNION решение явно неверное
-SELECT DISTINCT brand_id FROM goods WHERE cat_id = 1
+SELECT categories.*, GROUP_CONCAT(DISTINCT brands.name SEPARATOR ',') AS brand_list
+FROM categories
+LEFT JOIN goods ON goods.cat_id = categories.id
+LEFT JOIN brands ON goods.brand_id = brands.id
+GROUP BY categories.id
+-- Postgres
+SELECT categories.*, STRING_AGG(DISTINCT brands.name, ',') AS brand_list
+FROM categories
+LEFT JOIN goods ON goods.cat_id = categories.id
+LEFT JOIN brands ON goods.brand_id = brands.id
+GROUP BY categories.id
